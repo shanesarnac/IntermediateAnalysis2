@@ -41,10 +41,10 @@ void implicitEulers(double h, double t0, double y0, double tmax) {
 /* Problem 1 End */
 
 int main() {
-	double h = 0.0001;
+	double h = 0.001;
 	double t0 = 0;
 	double y0 = 0;
-	double tmax = 0.01;
+	double tmax = 5.0;
 	
 	implicitEulers(h, t0, y0, tmax);
 	
