@@ -1,0 +1,5 @@
+Implicit Eulers
+k, t_k, y_k, y_real
+0,0,0,0
+1,0.01,0.927182,1.01787
+
