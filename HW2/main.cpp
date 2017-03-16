@@ -44,7 +44,7 @@ void gearsThreePoint(double h, double t0, double y0, double t1, double y1, doubl
 	
 	cout << "Gears Three Point" << endl;
 	cout << "t_k, y_k, y_real" << endl;
-	cout << t0 << "," << y0 << "," << realSolution(t0);
+	cout << t2 << "," << y2 << "," << realSolution(t2) << endl;
 	// How do we determine y1 and y2?
 	
 	y_km2 = y0;
@@ -67,12 +67,18 @@ void gearsThreePoint(double h, double t0, double y0, double t1, double y1, doubl
 /* Problem 1 End */
 
 int main() {
-	double h = 0.001;
+	double h = 0.0001;
 	double t0 = 0;
 	double y0 = 0;
-	double tmax = 5.0;
+	double tmax = 0.01;
 	
-	implicitEulers(h, t0, y0, tmax);
+	double tm1 = t0 - 0.0001;
+	double tm2 = tm1 - 0.0001; 
+	double ym1 = 1.0-exp(-1000.0*tm1);
+	double ym2 = 1.0-exp(-1000.0*tm2);
+	
+	//implicitEulers(h, t0, y0, tmax);
+	gearsThreePoint(h, tm2, ym2, tm1, ym1, t0, y0, tmax);
 	
 	//printSolution(h, t0, tmax);
 	
