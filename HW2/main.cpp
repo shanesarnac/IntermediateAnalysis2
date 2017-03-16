@@ -67,10 +67,10 @@ void gearsThreePoint(double h, double t0, double y0, double t1, double y1, doubl
 /* Problem 1 End */
 
 int main() {
-	double h = 0.0001;
+	double h = 0.01;
 	double t0 = 0;
 	double y0 = 0;
-	double tmax = 0.01;
+	double tmax = 5.0;
 	
 	double tm1 = t0 - 0.0001;
 	double tm2 = tm1 - 0.0001; 
