@@ -68,24 +68,24 @@ void gearsThreePoint(double h, double t0, double y0, double t1, double y1, doubl
 
 /* Problem 2 Begin */
 double PI = 3.1415926535897;
-double L = 100.0;
-double d = 5;
+double L = 0.1;
+double d = 0.005;
 double k = 400;
 double Tb = 100;
 double Tinf = 25;
 double conv_h = 100;
 double Area = PI*pow(0.5*d, 2);
 double P = PI*d;
-double m = sqrt(conv_h*P/(k*Area));
+double m = conv_h*P/(k*Area);
 
-double realSolutionProblem2(double x) {
-	double X = x/L;
+double realSolutionProblem2(double X) {
+	//double X = x/L;
 	return (cosh(m*L*(1.0-X)) + (conv_h/(m*k))*sinh(m*L*(1.0-X))) / (cosh(m*L) + (conv_h/(m*k))*sinh(m*L));
 }
 
 void printSolutionProblem2() {
 	cout << "x, y_real" << endl;
-	for (double x = 0.0; x <= L; x += 10.0) {
+	for (double x = 0.0; x <= 0.1; x += 0.01) {
 		cout << x << "," << realSolutionProblem2(x) << endl;
 	}
 	cout << endl;
@@ -94,30 +94,28 @@ void printSolutionProblem2() {
 void dividedDifferences() {
 	double theta[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	double deltaX = 0.1;
-	double delta = 2.0 + pow(m*(1)*deltaX, 2.0);
+	double delta = 2.0 + pow(m*L*deltaX, 2.0);
 	double x = 0.0;
 	
-	cout << "m = " << m << endl;
-	cout << "delta = " << delta << endl;
-
-	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 100; i++) {
 		theta[0] = 1;
 		for (int j = 1; j < 10; j++) {
-			theta[j] = theta[j-1] - delta*theta[j] + theta[j+1];
+			theta[j] = (theta[j-1] + theta[j+1])/delta;
 		}
-		theta[10] = 2*theta[9] - (delta + 2*(conv_h*L*deltaX/k))*theta[10];
+		theta[10] = 2*theta[9]/(delta + 2*(conv_h*L*deltaX/k));
 		
-		cout << "iteration " << i << endl;
-		cout << "x, theta_est, theta_real" << endl;
-		x = 0.0;
-		
-		for (int k = 0; k < 11; k++) {
-			cout << x << "," << theta[k] << "," << realSolutionProblem2(x) << endl;
-			x += 10;
-		}
-		cout << endl;
+		//cout << "iteration " << i << endl;
+
 	}
+	
+	cout << "x, theta_est, theta_real" << endl;
+	x = 0.0;
+	
+	for (int k = 0; k < 11; k++) {
+		cout << x << "," << theta[k] << "," << realSolutionProblem2(x) << endl;
+		x += deltaX;
+	}
+	cout << endl;
 }
 
 /* Problem 2 End */
