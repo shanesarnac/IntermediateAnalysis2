@@ -52,51 +52,59 @@ double initial_condition(double x) {
 	}
 }
 
-void dividedDifferences(double delta_x, double delta_t, double (*f)(double)) {
+void dividedDifferences2(double delta_x, double delta_t, double (*f)(double)) {
 	int n_nodes_x = 1.0/delta_x + 1;
 	int n_nodes_t = 1.0/delta_t;
 	double distribution[n_nodes_t][n_nodes_x];
+	double redimensionalized[n_nodes_t][n_nodes_x];
 	double x_i = 0;
-	
-	//cout << "nodes: " << n_nodes << endl;
 	
 	// fill array with initial values
 	for (int i = 0; i < n_nodes_x; i++) {
-		//cout << "x_i = " << x_i << endl;
 		distribution[0][i] = f(x_i);
+		redimensionalized[0][i] = distribution[0][i]*T_s;
 		x_i += delta_x;
-		//cout << initial_vector[i] << endl;
 	}
-	
-	//double * t_im1 = initial_vector;
-	//printArray(n_nodes, t_im1);
 	
 	for (int i = 1; i < n_nodes_t; i++) {
-		
-		//double t_i[] = new double[n_nodes];
-		for (int j = 0; j < n_nodes_x; j++) {
+		// set current row to all zeroes
+		for (int j = 1; j < n_nodes_x-1; j++) {
 			distribution[i][j] = 0;
+			redimensionalized[i][j] = distribution[i][j]*T_s;
 		}
+		
+		distribution[i][0] = 0;
+		redimensionalized[i][0] = distribution[i][0]*T_s;
+		
+		distribution[i][n_nodes_x-1] = 0;
+		redimensionalized[i][n_nodes_x-1] = distribution[i][n_nodes_x-1]*T_s;
 		
 		for (int j = 1; j < n_nodes_x-1; j++) {
-			distribution[i][j] = 0.5*(distribution[i][j-1] + distribution[i][j+1] + ((distribution[i-1][j]*pow(delta_x, 2.0)/(2*A*delta_t))));
+			distribution[i][j] = 0.5*(distribution[i][j-1] + distribution[i][j+1] + ((distribution[i-1][j]*pow(delta_x, 2.0)/(2.0*A*delta_t))));
+			redimensionalized[i][j] = distribution[i][j]*T_s;
 		}
-		
-
-		//printArray2D(n_nodes_x, n_nodes_t, distribution);
-		//printArray(n_nodes, t_im1);
 	}
 	
+	// Non-dimensionalized
+	cout << "Non-dimensionalized" << endl;
 	for (int i = 0; i < n_nodes_t; i++) {
 		for (int j = 0; j < n_nodes_x-1; j++) {
 			cout << distribution[i][j] << ",";
 		}
 		cout << distribution[i][n_nodes_x-1] << endl;
 	}
+	cout << endl;
 	
 	
-	
-	
+	// Redimensionalized
+	cout << "Re-dimensionalized" << endl;
+	for (int i = 0; i < n_nodes_t; i++) {
+		for (int j = 0; j < n_nodes_x-1; j++) {
+			cout << redimensionalized[i][j] << ",";
+		}
+		cout << redimensionalized[i][n_nodes_x-1] << endl;
+	}
+	cout << endl;
 }
 
 /* Problem 2 End */
@@ -113,11 +121,14 @@ void dividedDifferences(double delta_x, double delta_t, double (*f)(double)) {
 /* Problem 4 End */
 
 int main() {
+	
+	//cout.setf(ios::fixed,ios::floatfield);
+   // cout.precision(3);
+    
 	double delta_x = 1.0/8.0;
 	double delta_t = 1.0/10.0;
 	
-	cout << "A = " << A << endl;
-	dividedDifferences(delta_x, delta_t, initial_condition);
+	dividedDifferences2(delta_x, delta_t, initial_condition);
 		
 	return 0;
 }
