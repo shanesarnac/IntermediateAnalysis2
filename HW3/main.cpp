@@ -66,22 +66,25 @@ void dividedDifferences2(double delta_x, double delta_t, double (*f)(double)) {
 		x_i += delta_x;
 	}
 	
-	for (int i = 1; i < n_nodes_t; i++) {
+	double r = A*delta_t/pow(delta_x, 2.0);
+	cout << "r = " << r << endl;
+	for (int i = 0; i < n_nodes_t-1; i++) {
 		// set current row to all zeroes
+		//for (int j = 1; j < n_nodes_x-1; j++) {
+			//distribution[i][j] = 0;
+			//redimensionalized[i][j] = distribution[i][j]*T_s;
+		//}
+		
+		distribution[i+1][0] = 0;
+		redimensionalized[i+1][0] = distribution[i+1][0]*T_s;
+		
+		distribution[i+1][n_nodes_x-1] = 0;
+		redimensionalized[i+1][n_nodes_x-1] = distribution[i+1][n_nodes_x-1]*T_s;
+		
 		for (int j = 1; j < n_nodes_x-1; j++) {
-			distribution[i][j] = 0;
-			redimensionalized[i][j] = distribution[i][j]*T_s;
-		}
-		
-		distribution[i][0] = 0;
-		redimensionalized[i][0] = distribution[i][0]*T_s;
-		
-		distribution[i][n_nodes_x-1] = 0;
-		redimensionalized[i][n_nodes_x-1] = distribution[i][n_nodes_x-1]*T_s;
-		
-		for (int j = 1; j < n_nodes_x-1; j++) {
-			distribution[i][j] = 0.5*(distribution[i][j-1] + distribution[i][j+1] + ((distribution[i-1][j]*pow(delta_x, 2.0)/(2.0*A*delta_t))));
-			redimensionalized[i][j] = distribution[i][j]*T_s;
+			distribution[i+1][j] = r*distribution[i][j-1] + r*distribution[i][j+1] + (1.0-2.0*r)*distribution[i][j];
+			//distribution[i][j] = 0.5*(distribution[i][j-1] + distribution[i][j+1] + ((distribution[i-1][j]*pow(delta_x, 2.0)/(2.0*A*delta_t))));
+			redimensionalized[i+1][j] = distribution[i+1][j]*T_s;
 		}
 	}
 	
@@ -106,14 +109,16 @@ void dividedDifferences2(double delta_x, double delta_t, double (*f)(double)) {
 	}
 	cout << endl;
 }
-
 /* Problem 2 End */
+
+//////////////////////////////////////
 
 /* Problem 3 Begin */
 
 
 /* Problem 3 End */
 
+///////////////////////////////////////
 
 /* Problem 4 Begin */
 
@@ -122,11 +127,12 @@ void dividedDifferences2(double delta_x, double delta_t, double (*f)(double)) {
 
 int main() {
 	
-	//cout.setf(ios::fixed,ios::floatfield);
-   // cout.precision(3);
+	cout.setf(ios::fixed,ios::floatfield);
+    cout.precision(3);
     
 	double delta_x = 1.0/8.0;
-	double delta_t = 1.0/10.0;
+	double delta_t = 1.0/48.0; // makes r approx 0.5
+	//double delta_t = 1.0/24; // makes r approx 1.0
 	
 	dividedDifferences2(delta_x, delta_t, initial_condition);
 		
