@@ -52,7 +52,7 @@ double initial_condition(double x) {
 	}
 }
 
-void dividedDifferences2(double delta_x, double delta_t, double (*f)(double)) {
+void generalMethod(double delta_x, double delta_t, double (*f)(double), double w) {
 	int n_nodes_x = 1.0/delta_x + 1;
 	int n_nodes_t = 1.0/delta_t;
 	double distribution[n_nodes_t][n_nodes_x];
@@ -70,19 +70,20 @@ void dividedDifferences2(double delta_x, double delta_t, double (*f)(double)) {
 	cout << "r = " << r << endl;
 	for (int i = 0; i < n_nodes_t-1; i++) {
 		// set current row to all zeroes
-		//for (int j = 1; j < n_nodes_x-1; j++) {
-			//distribution[i][j] = 0;
-			//redimensionalized[i][j] = distribution[i][j]*T_s;
-		//}
-		
-		distribution[i+1][0] = 0;
-		redimensionalized[i+1][0] = distribution[i+1][0]*T_s;
+		for (int j = 0; j < n_nodes_x; j++) {
+			distribution[i+1][j] = 0;
+			redimensionalized[i+1][j] = distribution[i][j]*T_s;
+		}
 		
 		distribution[i+1][n_nodes_x-1] = 0;
 		redimensionalized[i+1][n_nodes_x-1] = distribution[i+1][n_nodes_x-1]*T_s;
 		
 		for (int j = 1; j < n_nodes_x-1; j++) {
-			distribution[i+1][j] = r*distribution[i][j-1] + r*distribution[i][j+1] + (1.0-2.0*r)*distribution[i][j];
+			distribution[i+1][j] = w*r*distribution[i+1][j-1] + w*r*distribution[i+1][j+1];
+			distribution[i+1][j] += (1-w)*r*(distribution[i][j-1] - 2.0*distribution[i][j] + distribution[i][j+1]);
+			distribution[i+1][j] += distribution[i][j];
+			distribution[i+1][j] = distribution[i+1][j]/(1.0+2.0*w*r);
+			//distribution[i+1][j] = r*distribution[i][j-1] + r*distribution[i][j+1] + (1.0-2.0*r)*distribution[i][j];
 			//distribution[i][j] = 0.5*(distribution[i][j-1] + distribution[i][j+1] + ((distribution[i-1][j]*pow(delta_x, 2.0)/(2.0*A*delta_t))));
 			redimensionalized[i+1][j] = distribution[i+1][j]*T_s;
 		}
@@ -133,8 +134,12 @@ int main() {
 	double delta_x = 1.0/8.0;
 	double delta_t = 1.0/48.0; // makes r approx 0.5
 	//double delta_t = 1.0/24; // makes r approx 1.0
+	//double w = 0.0;
+	//double w = 2.0/3.0;
+	//double w = 0.878;
+	double w = 1.0;
 	
-	dividedDifferences2(delta_x, delta_t, initial_condition);
+	generalMethod(delta_x, delta_t, initial_condition, w);
 		
 	return 0;
 }
