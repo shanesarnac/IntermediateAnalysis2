@@ -58,6 +58,7 @@ void generalMethod(double delta_x, double delta_t, double (*f)(double), double w
 	double distribution[n_nodes_t][n_nodes_x];
 	double redimensionalized[n_nodes_t][n_nodes_x];
 	double x_i = 0;
+	cout << "A = " << A << endl;
 	
 	// fill array with initial values
 	for (int i = 0; i < n_nodes_x; i++) {
@@ -89,27 +90,39 @@ void generalMethod(double delta_x, double delta_t, double (*f)(double), double w
 		}
 	}
 	
+	double time_elapsed = 0;
+	int middle = n_nodes_x/2;
+	cout << "middle = " << middle << endl;
 	// Non-dimensionalized
-	cout << "Non-dimensionalized" << endl;
-	for (int i = 0; i < n_nodes_t; i++) {
-		for (int j = 0; j < n_nodes_x-1; j++) {
-			cout << distribution[i][j] << ",";
-		}
-		cout << distribution[i][n_nodes_x-1] << endl;
-	}
+	//cout << "Non-dimensionalized" << endl;
+	//cout << "t, T" << endl;
+	
+	//for (int i = 0; i < n_nodes_t; i++) {
+		////for (int j = 0; j < n_nodes_x-1; j++) {
+			////cout << distribution[i][j] << ",";
+		////}
+		////cout << distribution[i][n_nodes_x-1] << endl;
+		//cout << time_elapsed << ", " << distribution[i][middle] << endl;
+		//time_elapsed += delta_t;
+	//}
 	cout << endl;
 	
 	
 	// Redimensionalized
 	cout << "Re-dimensionalized" << endl;
-	for (int i = 0; i < n_nodes_t; i++) {
-		for (int j = 0; j < n_nodes_x-1; j++) {
-			cout << redimensionalized[i][j] << ",";
-		}
-		cout << redimensionalized[i][n_nodes_x-1] << endl;
+	cout << "t, T" << endl;
+	for (int i = 0; i < 10/*n_nodes_t*/; i++) {
+		//for (int j = 0; j < n_nodes_x-1; j++) {
+			//cout << redimensionalized[i][j] << ",";
+		//}
+		//cout << redimensionalized[i][n_nodes_x-1] << endl;
+		cout << time_elapsed*t_s << ", " << redimensionalized[i][middle] << endl;
+		time_elapsed += delta_t;
 	}
 	cout << endl;
 }
+
+
 /* Problem 2 End */
 
 //////////////////////////////////////
@@ -132,8 +145,8 @@ int main() {
     cout.precision(3);
     
 	double delta_x = 1.0/8.0;
-	double delta_t = 1.0/48.0; // makes r approx 0.5
-	//double delta_t = 1.0/24; // makes r approx 1.0
+	//double delta_t = 1.0/48.0; // makes r approx 0.5
+	double delta_t = 1.0/24; // makes r approx 1.0
 	//double w = 0.0;
 	//double w = 2.0/3.0;
 	//double w = 0.878;
