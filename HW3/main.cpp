@@ -24,11 +24,79 @@ void printArray2D(int size_x, int size_y, double** array) {
 
 /* Problem 1 Begin */
 
+double L_y = 5;
+double L_x = 9;
+double h = 0.073;
+double k1 = 0.16;
+double delta_z = 0.5;
+double q = 0.6;
+double T_inf = 25;
+double T_ref = 20;
+double delta_x = 1;
+double alpha1 = -delta_z*q*pow(L_x, 2.0)/(T_inf - T_ref);
+
+void finiteDifferences() {
+	int x_max = L_x + 1.0;
+	int y_max = L_y + 1.0;
+	double distribution[y_max][x_max];
+	double delta_X = delta_x/L_x;
+
+	
+	
+	// initialize distribution with zeroes
+	for (int i = 0; i < y_max; i++) {
+		for (int j = 0; j < x_max; j++) {
+			distribution[i][j] = 0;
+		}
+	}
+	
+	// Bottom Edge
+	for (int i = 1; i < x_max-1; i++) {
+		distribution[0][i] = 0.25*(distribution[0][i-1] + distribution[0][i+1] +2*distribution[1][i] - 30*L_x*(delta_X)/(T_inf - T_ref) - alpha1*pow(delta_X, 2.0));
+	}
+	
+	// Interior Points
+	for (int i = 1; i < y_max-1; i++) {
+		for (int j = 1; j < x_max-1; j++) {
+			distribution[i][j] = 0.25*(distribution[i][j-1] + distribution[i][j+1] + distribution[i+1][j] + distribution[i-1][j] - alpha1*pow(delta_X, 2.0)); 
+		}
+	}
+	
+	// Top Edge
+	for (int i = 1; i < x_max-1; i++) {
+		double a = 1.0 + h*L_x*delta_X/(2.0*k1);
+		double b = distribution[y_max-1][i-1] + distribution[y_max-1][i+1] + 2*h*L_x*delta_X/k1 + 2.0*distribution[y_max-2][i] - alpha1*pow(delta_X,2.0);
+		distribution[y_max-1][i] = 0.25*pow(a, -1.0)*b;
+	}
+	
+	// Print Result (Non-dimensionalized)
+	/*cout << endl;
+	cout << "Problem 1: Non-Dimensionalized" << endl;
+	for (int i = y_max-1; i >= 0; i--) {
+		for (int j = 0; j < x_max-1; j++) {
+			cout << distribution[i][j] << ",";
+		}
+		cout << distribution[i][x_max-1] << endl;
+	}
+	cout << endl;*/
+	
+	//cout << endl;
+	cout << "Problem 1: Re-Dimensionalized" << endl;
+	for (int i = y_max-1; i >= 0; i--) {
+		for (int j = 0; j < x_max-1; j++) {
+			cout << distribution[i][j]*(T_inf - T_ref) + T_ref << ",";
+		}
+		cout << distribution[i][x_max-1]*(T_inf - T_ref) + T_ref << endl;
+	}
+	cout << endl;
+}
+
 
 /* Problem 1 End */
 
 
 /* Problem 2 Begin*/
+
 
 double L = 2.0; 
 double k = 0.13;
@@ -143,7 +211,12 @@ int main() {
 	
 	cout.setf(ios::fixed,ios::floatfield);
     cout.precision(3);
+    // Problem 1
     
+    finiteDifferences();
+    
+    // Problem 2
+    /*
 	double delta_x = 1.0/8.0;
 	//double delta_t = 1.0/48.0; // makes r approx 0.5
 	double delta_t = 1.0/24; // makes r approx 1.0
@@ -153,6 +226,7 @@ int main() {
 	double w = 1.0;
 	
 	generalMethod(delta_x, delta_t, initial_condition, w);
+	*/
 		
 	return 0;
 }
