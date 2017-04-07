@@ -196,7 +196,90 @@ void generalMethod(double delta_x, double delta_t, double (*f)(double), double w
 //////////////////////////////////////
 
 /* Problem 3 Begin */
+int grid_width = 7;
+int grid_height = 6;
 
+void problem3() {
+	cout << "Problem 3!!!" << endl;
+	double dist[grid_height][grid_width];
+	double B,D,E,F,H;
+	double up,down,left,right;
+	
+	// Fill Distribution with Zeroes
+	for (int i = 0; i < grid_height; i++) {
+		for (int j = 0; j < grid_width; j++) {
+			dist[i][j] = 0;
+		}
+	}
+	
+	// Set known values to 1
+	dist[5][1] = 1;
+	dist[4][4] = 1;
+	dist[3][5] = 1;
+	dist[0][6] = 1;
+	
+	for (int i = 1; i < grid_height; i++) {
+		for (int j = 0; j < grid_width; j++) {
+			up = dist[i+1][j];
+			down = dist[i-1][j];
+			left = dist[i][j-1];
+			right = dist[i][j+1];
+			B = 25;
+			D = 25;
+			E = -100;
+			F = 25;
+			H = 25;
+			
+			// Stencil for 17
+			if ((i == 1) && (j == 5)) {
+				B = 25;
+				D = 26.33;
+				E = -105.6175;
+				F = 29.2875;
+				H = 25;
+				right = 1;
+			}
+			// Stencil for 12
+			if ((i == 2) && (j == 5)) {
+				B = 25;
+				D = 31.5925;
+				E = -135.8225;
+				F = 54.2275;
+				H = 25;
+				right = 1;
+			}
+			// Stencil for 3
+			if ((i == 4) && (j == 3)) {
+				B = 54.2275;
+				D = 25;
+				E = -135.8225;
+				F = 25;
+				H = 31.5925;
+				up = 1;
+			}
+			// Stencil for 2 and 2's reflection
+			if (((i == 4) && (j == 2)) || ((i == 4) && (j == 0))) {
+				B = 29.2875;
+				D = 25;
+				E = -105.6175;
+				F = 25;
+				H = 26.33;
+				up = 1;
+			}
+			
+			dist[i][j] = -(B*up + D*left + F*right + H*down)/E;
+		}
+	}
+	
+	// Print results
+	for (int i = grid_height -2; i > 0; i--) {
+		cout << "i = " << i << ": ";
+		for (int j = 1; j < grid_width-1; j++) {
+			cout << dist[i][j] << ",";
+		}
+		cout << dist[i][grid_width-1] << endl;
+	}
+}
 
 /* Problem 3 End */
 
@@ -213,10 +296,10 @@ int main() {
     cout.precision(3);
     // Problem 1
     
-    finiteDifferences();
+    /**finiteDifferences();**/
     
     // Problem 2
-    /*
+    /**
 	double delta_x = 1.0/8.0;
 	//double delta_t = 1.0/48.0; // makes r approx 0.5
 	double delta_t = 1.0/24; // makes r approx 1.0
@@ -226,7 +309,13 @@ int main() {
 	double w = 1.0;
 	
 	generalMethod(delta_x, delta_t, initial_condition, w);
-	*/
+	**/
+	
+	// Problem 3
+	problem3();
+	
+	
+	// Problem 4
 		
 	return 0;
 }
