@@ -287,6 +287,48 @@ void problem3() {
 
 /* Problem 4 Begin */
 
+int polar_grid_width = 6; // theta
+int polar_grid_height = 6; // r
+double delta_r = 0.2;
+double delta_theta = 0.3926990817; // pi/8
+
+void problem4() {
+	double dist[polar_grid_height][polar_grid_width];
+	
+	// Initialize distribution with all zeroes
+	for (int i = 0; i < polar_grid_height-1; i++) {
+		for (int j = 0; j < polar_grid_width; j++) {
+			dist[i][j] = 0;
+		}
+	}
+	
+	// Set outer boundary 
+	for (int j = 0; j < polar_grid_width; j++) {
+		dist[polar_grid_height-1][j] = 1;
+	}
+	
+	for (int i = polar_grid_height-2; i > 0; i--) {
+		double r = (double) i;
+		for (int j = 1; j < polar_grid_width; j++) {
+			double a = 2.0/pow(delta_theta, 2.0) + 2.0/(pow(r*delta_r, 2.0));
+			double b = (dist[i][j-1] + dist[i][j+1])/pow(delta_theta, 2.0);
+			b +=  (dist[i][j+1] - dist[i][j-1])/(2.0*r*delta_theta); 
+			b += (dist[i+1][j] + dist[i-1][j])/pow(r*delta_r, 2.0);
+			dist[i][j] = b/a;
+		}
+	}
+	
+	// Print output
+	for (int i = polar_grid_height-1; i >= 0; i--) {
+		cout << "i = " << i << ": ";
+		for (int j = polar_grid_width-2; j > 1; j--) {
+			//cout << "j = " << j << ",";
+			cout << dist[i][j] << ",";
+		}
+		//cout << "j = " << 1 << endl;
+		cout << dist[i][1] << endl;
+	}
+}
 
 /* Problem 4 End */
 
@@ -312,10 +354,10 @@ int main() {
 	**/
 	
 	// Problem 3
-	problem3();
-	
+	/**problem3(); **/
 	
 	// Problem 4
+	problem4();
 		
 	return 0;
 }
