@@ -8,6 +8,137 @@ using namespace std;
 
 #define PI 3.14159265359
 
+// Constants
+double T_inf_1 = 1700; //K
+double T_inf_2 = 400; //K
+double h1 = 1000; // W/(m^2 K)
+double h2 = 200; // W/(m^2 K)
+double k = 25; // W/ (m K)
+double delta_x = 0.001; // m 
+double delta_y = 0.001; // m
+
+double delta_alpha = delta_x/delta_y;
+double delta_beta = delta_y/delta_x;
+
+double node1(double T_t, double T_b, double T_l, double T_r) {
+	double result = 0.5*h1*delta_x*T_inf_1 + 0.5*k*(delta_x/delta_y)*T_b + 0.5*k*(delta_y/delta_x)*T_r;
+	result = result / (0.5*h1*delta_x + 0.5*k*(delta_x/delta_y) + 0.5*k*(delta_y/delta_x));
+	
+	return result;
+}
+
+double node2Through5(double T_t, double T_b, double T_l, double T_r) {
+	double result = h1*delta_x*T_inf_1 + k*(delta_x/delta_y)*T_b + 0.5*k*(delta_y/delta_x)*T_l + 0.5*k*(delta_y/delta_x)*T_r;
+	result = result / (h1*delta_x + k*(delta_x/delta_y) + k*(delta_y/delta_x));
+	
+	return result;
+}
+
+double node6(double T_t, double T_b, double T_l, double T_r) {
+	double result = 0.5*h1*delta_x*T_inf_1 + 0.5*k*(delta_x/delta_y)*T_b + 0.5*k*(delta_y/delta_x)*T_l;
+	result = result / (0.5*h1*delta_x + 0.5*k*(delta_x/delta_y) + 0.5*k*(delta_y/delta_x));
+	
+	return result;
+}
+
+double node7(double T_t, double T_b, double T_l, double T_r) {
+	double result = 0.5*(delta_x/delta_y)*T_t + 0.5*(delta_x/delta_y)*T_b + (delta_y/delta_x)*T_r;
+	result = result / ((delta_x/delta_y) + (delta_y/delta_x));
+	
+	return result;
+}
+
+double node8(double T_t, double T_b, double T_l, double T_r) {
+	double result = (delta_y/delta_x)*T_l + (delta_y/delta_x)*T_r + (delta_x/delta_y)*T_t + (delta_x/delta_y)*T_b;
+	result = 0.5 * result / ((delta_y/delta_x) + (delta_x/delta_y));
+	
+	return result;
+}
+
+double node9(double T_t, double T_b, double T_l, double T_r) {
+	return node8(T_t, T_b, T_l, T_r);
+}
+
+double node10(double T_t, double T_b, double T_l, double T_r) {
+	return node8(T_t, T_b, T_l, T_r);
+}
+
+double node11(double T_t, double T_b, double T_l, double T_r) {
+	return node8(T_t, T_b, T_l, T_r);
+}
+
+double node12(double T_t, double T_b, double T_l, double T_r) {
+	double result = 0.5*(delta_x/delta_y)*T_t + 0.5*(delta_x/delta_y)*T_b + (delta_y/delta_x)*T_l;
+	result = result / ((delta_x/delta_y) + (delta_y/delta_x));
+	
+	return result;
+}
+
+double node13(double T_t, double T_b, double T_l, double T_r) {
+	double result = 0.5*(delta_x/delta_y)*T_t + 0.5*(delta_x/delta_y)*T_b + (delta_y/delta_x)*T_r;
+	result = result / ((delta_x/delta_y) + (delta_y/delta_x));
+	
+	return result;
+}
+
+double node14(double T_t, double T_b, double T_l, double T_r) {
+	return node8(T_t, T_b, T_l, T_r);
+}
+
+double node15(double T_t, double T_b, double T_l, double T_r) {
+	double result = ;
+	result = result/ (k*delta_alpha + 0.5*k*delta_alpha + 0.5*h2*delta_x + k*delta_beta + 0.5*k*delta_beta + 0.5*h2*delta_y);
+	
+	return result;
+}
+
+
+// Problem 1 
+void problem1() {
+
+	
+	int L_x = 6;
+	int L_y = 5;
+	int row = L_y - 1;
+	int column = 0;
+	
+	double dist[L_y][L_x];
+	
+	// Initialize all points to zero
+	for (int i = 0; i < L_y; i++) {
+		for (int j = 0; j < L_x; j++) {
+			dist[i][j] = 0;
+		}
+	}
+	
+	// Node 1
+	dist[row][column] = node1(0, dist[row-1][column], 0, 0);
+	column++;
+	
+	// Nodes 2-5
+	for (int i = column; i < 5; i++) {
+		dist[row][column] = node2Through5(0, dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+	} 
+	
+	// Node 6
+	dist[row][column] = node6(0, dist[row-1][column], dist[row][column-1], 0);
+	column = 0;
+	row--;
+	
+	// Node 7
+	dist[row][column] = node7(dist[row+1][column], dist[row-1][column], 0, dist[row][column+1]);
+	column++;
+	
+	// Node 8
+	
+	
+	
+	
+	
+	
+}
+
 // Problem 6
 // Part a initial conditions
 double initialConditions6a (double x) {
@@ -91,10 +222,12 @@ int main() {
     cout.precision(3);
 
 	// Problem 1
+	problem1();
+	
 	
 	// Problem 6
 	// part a
-	problem6(initialConditions6a);
+	/** problem6(initialConditions6a); **/
 	
 	// part b
 	//problem6(initialConditions6b);
