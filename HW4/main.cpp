@@ -1,104 +1,22 @@
 
+#ifndef MAIN_CPP
+#define MAIN_CPP
+
 #include <iostream> 
 #include <math.h>
 #include <vector>
 #include <cstring>
 
+#include "problem1Nodes.h"
+
 using namespace std;
 
 #define PI 3.14159265359
 
-// Constants
-double T_inf_1 = 1700; //K
-double T_inf_2 = 400; //K
-double h1 = 1000; // W/(m^2 K)
-double h2 = 200; // W/(m^2 K)
-double k = 25; // W/ (m K)
-double delta_x = 0.001; // m 
-double delta_y = 0.001; // m
-
-double delta_alpha = delta_x/delta_y;
-double delta_beta = delta_y/delta_x;
-
-double node1(double T_t, double T_b, double T_l, double T_r) {
-	double result = 0.5*h1*delta_x*T_inf_1 + 0.5*k*(delta_x/delta_y)*T_b + 0.5*k*(delta_y/delta_x)*T_r;
-	result = result / (0.5*h1*delta_x + 0.5*k*(delta_x/delta_y) + 0.5*k*(delta_y/delta_x));
-	
-	return result;
-}
-
-double node2Through5(double T_t, double T_b, double T_l, double T_r) {
-	double result = h1*delta_x*T_inf_1 + k*(delta_x/delta_y)*T_b + 0.5*k*(delta_y/delta_x)*T_l + 0.5*k*(delta_y/delta_x)*T_r;
-	result = result / (h1*delta_x + k*(delta_x/delta_y) + k*(delta_y/delta_x));
-	
-	return result;
-}
-
-double node6(double T_t, double T_b, double T_l, double T_r) {
-	double result = 0.5*h1*delta_x*T_inf_1 + 0.5*k*(delta_x/delta_y)*T_b + 0.5*k*(delta_y/delta_x)*T_l;
-	result = result / (0.5*h1*delta_x + 0.5*k*(delta_x/delta_y) + 0.5*k*(delta_y/delta_x));
-	
-	return result;
-}
-
-double node7(double T_t, double T_b, double T_l, double T_r) {
-	double result = 0.5*(delta_x/delta_y)*T_t + 0.5*(delta_x/delta_y)*T_b + (delta_y/delta_x)*T_r;
-	result = result / ((delta_x/delta_y) + (delta_y/delta_x));
-	
-	return result;
-}
-
-double node8(double T_t, double T_b, double T_l, double T_r) {
-	double result = (delta_y/delta_x)*T_l + (delta_y/delta_x)*T_r + (delta_x/delta_y)*T_t + (delta_x/delta_y)*T_b;
-	result = 0.5 * result / ((delta_y/delta_x) + (delta_x/delta_y));
-	
-	return result;
-}
-
-double node9(double T_t, double T_b, double T_l, double T_r) {
-	return node8(T_t, T_b, T_l, T_r);
-}
-
-double node10(double T_t, double T_b, double T_l, double T_r) {
-	return node8(T_t, T_b, T_l, T_r);
-}
-
-double node11(double T_t, double T_b, double T_l, double T_r) {
-	return node8(T_t, T_b, T_l, T_r);
-}
-
-double node12(double T_t, double T_b, double T_l, double T_r) {
-	double result = 0.5*(delta_x/delta_y)*T_t + 0.5*(delta_x/delta_y)*T_b + (delta_y/delta_x)*T_l;
-	result = result / ((delta_x/delta_y) + (delta_y/delta_x));
-	
-	return result;
-}
-
-double node13(double T_t, double T_b, double T_l, double T_r) {
-	double result = 0.5*(delta_x/delta_y)*T_t + 0.5*(delta_x/delta_y)*T_b + (delta_y/delta_x)*T_r;
-	result = result / ((delta_x/delta_y) + (delta_y/delta_x));
-	
-	return result;
-}
-
-double node14(double T_t, double T_b, double T_l, double T_r) {
-	return node8(T_t, T_b, T_l, T_r);
-}
-
-double node15(double T_t, double T_b, double T_l, double T_r) {
-	double result = ;
-	result = result/ (k*delta_alpha + 0.5*k*delta_alpha + 0.5*h2*delta_x + k*delta_beta + 0.5*k*delta_beta + 0.5*h2*delta_y);
-	
-	return result;
-}
-
-
 // Problem 1 
 void problem1() {
-
-	
 	int L_x = 6;
-	int L_y = 5;
+	int L_y = 4;
 	int row = L_y - 1;
 	int column = 0;
 	
@@ -107,36 +25,111 @@ void problem1() {
 	// Initialize all points to zero
 	for (int i = 0; i < L_y; i++) {
 		for (int j = 0; j < L_x; j++) {
-			dist[i][j] = 0;
+			dist[i][j] = 400;
 		}
 	}
 	
-	// Node 1
-	dist[row][column] = node1(0, dist[row-1][column], 0, 0);
-	column++;
-	
-	// Nodes 2-5
-	for (int i = column; i < 5; i++) {
-		dist[row][column] = node2Through5(0, dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+	// Iterate until stable
+	for (int i = 0; i < 40; i++) {
+		row = L_y-1;
+		column = 0;
+		
+		// Node 1
+		dist[row][column] = node1(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
 		column++;
-	} 
+		
+		// Node 2
+		dist[row][column] = node2(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 3
+		dist[row][column] = node3(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 4
+		dist[row][column] = node4(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 5
+		dist[row][column] = node5(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 6
+		dist[row][column] = node6(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column = 0;
+		row--;
+		
+		// Node 7
+		dist[row][column] = node7(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 8
+		dist[row][column] = node8(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 9
+		dist[row][column] = node9(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 10
+		dist[row][column] = node10(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 11
+		dist[row][column] = node11(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 12
+		dist[row][column] = node12(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column = 0;
+		row--;
+		
+		// Node 13
+		dist[row][column] = node13(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 14
+		dist[row][column] = node14(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 15
+		dist[row][column] = node15(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 16
+		dist[row][column] = node16(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 17
+		dist[row][column] = node17(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 18
+		dist[row][column] = node18(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column = 0;
+		row--;
+
+		// Node 19
+		dist[row][column] = node19(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 20
+		dist[row][column] = node20(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+		
+		// Node 21
+		dist[row][column] = node21(dist[row+1][column], dist[row-1][column], dist[row][column-1], dist[row][column+1]);
+		column++;
+	}
 	
-	// Node 6
-	dist[row][column] = node6(0, dist[row-1][column], dist[row][column-1], 0);
-	column = 0;
-	row--;
+	for (int i = L_y-1; i >= 0; i--) {
+		for (int j = 0; j < L_x-1; j++) {
+			cout << dist[i][j] << ",";
+		}
+		cout << dist[i][L_x-1] << endl;
+	}
 	
-	// Node 7
-	dist[row][column] = node7(dist[row+1][column], dist[row-1][column], 0, dist[row][column+1]);
-	column++;
-	
-	// Node 8
-	
-	
-	
-	
-	
-	
+
 }
 
 // Problem 6
@@ -234,3 +227,4 @@ int main() {
 		
 	return 0;
 }
+#endif
