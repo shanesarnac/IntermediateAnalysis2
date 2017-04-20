@@ -116,6 +116,7 @@ solution_data$Part_3 = solution_data$Part_3 / (part_3[2] * sqrt(2*pi))
 
 
 #### Plot Results
+par(mfrow = c(1,1))
 # Part 1
 plot(world_oil_data$Year_Scaled, world_oil_data$World_Oil_Scaled, 
      xlim = c(-200,200), ylim = c(0, 4),
