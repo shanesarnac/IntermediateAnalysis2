@@ -215,12 +215,12 @@ int main() {
     cout.precision(3);
 
 	// Problem 1
-	problem1();
+	//problem1();
 	
 	
 	// Problem 6
 	// part a
-	/** problem6(initialConditions6a); **/
+	 problem6(initialConditions6a); 
 	
 	// part b
 	//problem6(initialConditions6b);
