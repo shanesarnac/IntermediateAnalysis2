@@ -4,30 +4,49 @@ import matplotlib.pyplot as plt
 
 class LevelCurvesSolver:
 	def __init__(self, h, x, y, function_data):
-		self.levelCurveX = []
-		self.levelCurveY = []
+		self.levelCurveX = [x]
+		self.levelCurveY = [y]
 		self.minX = min(function_data.x)
-		self.maxX = max(function_data.x)
-		self.minY = min(function_data.y)
-		self.maxY = max(function_data.y)
+		self.maxX = max(function_data.x) + function_data.deltaX
+		self.minY = min(function_data.y) 
+		self.maxY = max(function_data.y) + function_data.deltaY
 		self.findLevelCurve(h, x, y, function_data)
+		
+		for i in range(10):
+			print("i = " + str(i))
+			x2 = self.levelCurveX[-1]
+			y2 = self.levelCurveY[-1]
+			self.findLevelCurve(h, x2, y2, function_data)
+			print("")
+		self.findLevelCurve(h, x, y, function_data)
+		for i in range(13):
+			x1 = self.levelCurveX[-2]
+			y1 = self.levelCurveY[-2]
+			self.findLevelCurve(h, x1, y1, function_data)
+			
+		self.plotLevelCurve()
+			
 		
 	def findLevelCurve(self, h, x, y, function_data):
 		factory = StrategyFactory(function_data)
 		strategy = factory.getStrategy(x, y)
 		
 		print(strategy.getStrategyName())
+		
+		print("x = " + str(x))
+		print("y = " + str(y))
+		
 		(x1, y1, x2, y2) = strategy.findValue(h,x,y)
 		
 		if function_data.isPointInData(x1,y1):
 			self.levelCurveX.append(x1)
 			self.levelCurveY.append(y1)
-			self.findLevelCurve(h, x1, y1, function_data)
+		if function_data.isPointInData(x2,y2):
+			self.levelCurveX.append(x2)
+			self.levelCurveY.append(y2)
 		
-		#if function_data.isPointInData(x2,y2):
-			#self.levelCurveX.append(x2)
-			#self.levelCurveY.append(y2)
-			#self.findLevelCurve(h, x2, y2, function_data)
+		#print("(x1,y1) = (" + str(x1) + "," + str(y1) + "), f(x1,y1) = " + str(pow(x1,2.0) + pow(y1, 2.0)))
+		print("(x2,y2) = (" + str(x2) + "," + str(y2) + "), f(x2,y2) = " + str(pow(x2,2.0) + pow(y2, 2.0)))
 	
 	def plotLevelCurve(self):
 		plt.plot(self.levelCurveX, self.levelCurveY, "ro")
@@ -132,10 +151,13 @@ class MiddlePointStrategy(Strategy):
 		dfdx = (top_right - top_left + bottom_right - bottom_left)/(4.0*self.function_values.deltaX)
 		dfdy = (top_left - bottom_left + top_right - bottom_right)/(4.0*self.function_values.deltaY)
 		
-		x_new1 = x + h*(dfdx)
-		y_new1 = y + h*(-dfdy)
-		x_new2 = x + h*(-dfdx)
-		y_new2 = y + h*(dfdy)
+		print("dfdx = " + str(dfdx))
+		print("dfdy = " + str(dfdy))
+		
+		x_new1 = x + h*(dfdy)
+		y_new1 = y + h*(-dfdx)
+		x_new2 = x + h*(-dfdy)
+		y_new2 = y + h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -171,10 +193,10 @@ class VertexStrategy(Strategy):
 		dfdx = (right - left)/(2.0*self.function_values.deltaX)
 		dfdy = (top - bottom)/(2.0*self.function_values.deltaY)
 		
-		x_new1 = x + h*(dfdx)
-		y_new1 = y + h*(-dfdy)
-		x_new2 = x + h*(-dfdx)
-		y_new2 = y + h*(dfdy)
+		x_new1 = x + h*(dfdy)
+		y_new1 = y + h*(-dfdx)
+		x_new2 = x + h*(-dfdy)
+		y_new2 = y + h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -207,10 +229,10 @@ class BottomEdgeVertexStrategy(Strategy):
 		dfdx = (right - left)/(2*self.function_values.deltaX)
 		dfdy = (top - center)/(self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*dfdx
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*dfdy
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -243,10 +265,10 @@ class LeftEdgeVertexStrategy(Strategy):
 		dfdx = (right - center)/(self.function_values.deltaX)
 		dfdy = (top - bottom)/(2.0*self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 	
@@ -278,10 +300,10 @@ class RightEdgeVertexStrategy(Strategy):
 		dfdx = (center - left)/(self.function_values.deltaX)
 		dfdy = (top - bottom)/(2.0*self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -314,10 +336,10 @@ class TopEdgeVertexStrategy(Strategy):
 		dfdx = (right - left)/(2.0*self.function_values.deltaX)
 		dfdy = (center - bottom)/(self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -350,10 +372,10 @@ class BottomEdgeMiddlePointStrategy(Strategy):
 		dfdx = (left - right)/(2*self.function_values.deltaX)
 		dfdy = (top_left - left + top_right - right)/(2*self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -386,10 +408,10 @@ class LeftEdgeMiddlePointStrategy(Strategy):
 		dfdx = (top_right - top + bottom_right - bottom)/(2.0*self.function_values.deltaX)
 		dfdy = (top - bottom)/(2*self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -422,10 +444,10 @@ class RightEdgeMiddlePointStrategy(Strategy):
 		dfdx = (top - top_left + bottom - bottom_left)/(2.0*self.function_values.deltaX)
 		dfdy = (top - bottom)/(2.0*self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -458,10 +480,10 @@ class TopEdgeMiddlePointStrategy(Strategy):
 		dfdx = (left - right)/(2.0*self.function_values.deltaX)
 		dfdy = (left - bottom_left + right - bottom_right)/(2.0*self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -500,10 +522,10 @@ class HorizontalVertexMiddlePointStrategy(Strategy):
 		dfdx = (right - left)/(2.0*self.function_values.deltaX)
 		dfdy = (top_left - bottom_left + top_right - bottom_right)/(4.0*self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 
@@ -542,10 +564,10 @@ class VerticalVertexMiddlePointStrategy(Strategy):
 		dfdx = (top_right - top_left + bottom_right - bottom_left)/(4.0*self.function_values.deltaX)
 		dfdy = (top - bottom)/(2.0*self.function_values.deltaY)
 		
-		x_new1 = x + 0.5*h*(dfdx)
-		y_new1 = y + 0.5*h*(-dfdy)
-		x_new2 = x + 0.5*h*(-dfdx)
-		y_new2 = y + 0.5*h*(dfdy)
+		x_new1 = x + 0.5*h*(dfdy)
+		y_new1 = y + 0.5*h*(-dfdx)
+		x_new2 = x + 0.5*h*(-dfdy)
+		y_new2 = y + 0.5*h*(dfdx)
 		
 		return (x_new1, y_new1, x_new2, y_new2)
 		
@@ -650,7 +672,7 @@ def testStrategyAssignment(function_data):
 def main():
 	x = 1.0
 	y = 1.0
-	h = 0.1
+	h = 0.05
 	print("(x,y) = (" + str(x) + "," + str(y) + ")")
 	filename = sys.argv[1]
 
@@ -660,5 +682,5 @@ def main():
 	testStrategyAssignment(function_data)
 	
 	level_curve_solver = LevelCurvesSolver(h, x, y, function_data)
-	level_curve_solver.plotLevelCurve()
+	#level_curve_solver.plotLevelCurve()
 main()
