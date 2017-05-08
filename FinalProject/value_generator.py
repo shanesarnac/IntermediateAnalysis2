@@ -5,7 +5,7 @@ def function1(x,y):
 	return pow(x,2.0) + pow(y, 2.0)
 	
 def function2(x,y):
-	return 5*pow(x,4.0) + 3*pow(x, 2.0) + 2*pow(y, 4.0) + 5*pow(y, 2.0)
+	return pow(x-1.0, 2.0) + pow(y - 1.0, 2.0)
 
 def printFunction(f, h, xmin, xmax, ymin, ymax):
 	x = xmin

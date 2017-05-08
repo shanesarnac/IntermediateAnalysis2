@@ -12,29 +12,25 @@ class LevelCurvesSolver:
 		self.maxY = max(function_data.y) + function_data.deltaY
 		self.findLevelCurve(h, x, y, function_data)
 		
-		for i in range(10):
-			print("i = " + str(i))
+		max_index = 1500
+		
+		for i in range(max_index):
 			x2 = self.levelCurveX[-1]
 			y2 = self.levelCurveY[-1]
 			self.findLevelCurve(h, x2, y2, function_data)
-			print("")
 		self.findLevelCurve(h, x, y, function_data)
-		for i in range(13):
+		for i in range(max_index):
 			x1 = self.levelCurveX[-2]
 			y1 = self.levelCurveY[-2]
 			self.findLevelCurve(h, x1, y1, function_data)
 			
 		self.plotLevelCurve()
-			
 		
 	def findLevelCurve(self, h, x, y, function_data):
 		factory = StrategyFactory(function_data)
 		strategy = factory.getStrategy(x, y)
 		
 		print(strategy.getStrategyName())
-		
-		print("x = " + str(x))
-		print("y = " + str(y))
 		
 		(x1, y1, x2, y2) = strategy.findValue(h,x,y)
 		
@@ -44,9 +40,6 @@ class LevelCurvesSolver:
 		if function_data.isPointInData(x2,y2):
 			self.levelCurveX.append(x2)
 			self.levelCurveY.append(y2)
-		
-		#print("(x1,y1) = (" + str(x1) + "," + str(y1) + "), f(x1,y1) = " + str(pow(x1,2.0) + pow(y1, 2.0)))
-		print("(x2,y2) = (" + str(x2) + "," + str(y2) + "), f(x2,y2) = " + str(pow(x2,2.0) + pow(y2, 2.0)))
 	
 	def plotLevelCurve(self):
 		plt.plot(self.levelCurveX, self.levelCurveY, "ro")
@@ -670,10 +663,10 @@ def testStrategyAssignment(function_data):
 
 
 def main():
-	x = 1.0
-	y = 1.0
-	h = 0.05
-	print("(x,y) = (" + str(x) + "," + str(y) + ")")
+	x = 0.5
+	y = 0.75
+	h = 0.005
+	#print("(x,y) = (" + str(x) + "," + str(y) + ")")
 	filename = sys.argv[1]
 
 	function_data = FunctionData()
