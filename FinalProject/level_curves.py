@@ -1,3 +1,9 @@
+# Shane Sarnac
+# APPM 4660 - Numerical Analysis 2
+# To get most up-to date code, you may clone this code from my github
+# at the following link: 
+# https://github.com/shanesarnac/IntermediateAnalysis2/tree/master/FinalProject
+
 import sys
 import math
 import matplotlib.pyplot as plt
@@ -12,7 +18,7 @@ class LevelCurvesSolver:
 		self.maxY = max(function_data.y) + function_data.deltaY
 		self.findLevelCurve(h, x, y, function_data)
 		
-		max_index = 1500
+		max_index = 40000
 		
 		for i in range(max_index):
 			x2 = self.levelCurveX[-1]
@@ -24,13 +30,13 @@ class LevelCurvesSolver:
 			y1 = self.levelCurveY[-2]
 			self.findLevelCurve(h, x1, y1, function_data)
 			
-		self.plotLevelCurve()
+		#self.plotLevelCurve()
 		
 	def findLevelCurve(self, h, x, y, function_data):
 		factory = StrategyFactory(function_data)
 		strategy = factory.getStrategy(x, y)
 		
-		print(strategy.getStrategyName())
+		#print(strategy.getStrategyName())
 		
 		(x1, y1, x2, y2) = strategy.findValue(h,x,y)
 		
@@ -45,7 +51,7 @@ class LevelCurvesSolver:
 		plt.plot(self.levelCurveX, self.levelCurveY, "ro")
 		plt.xlabel("x")
 		plt.ylabel("y")
-		plt.title("Level Curve")
+		plt.title("Level Curve For Given Point (x0 = " + str(self.levelCurveX[0]) + ", y0 = " + str(self.levelCurveY[0]) + ")")
 		plt.axis([self.minX, self.maxX, self.minY, self.maxY])
 		plt.show()
 		
@@ -144,8 +150,8 @@ class MiddlePointStrategy(Strategy):
 		dfdx = (top_right - top_left + bottom_right - bottom_left)/(4.0*self.function_values.deltaX)
 		dfdy = (top_left - bottom_left + top_right - bottom_right)/(4.0*self.function_values.deltaY)
 		
-		print("dfdx = " + str(dfdx))
-		print("dfdy = " + str(dfdy))
+		#print("dfdx = " + str(dfdx))
+		#print("dfdy = " + str(dfdy))
 		
 		x_new1 = x + h*(dfdy)
 		y_new1 = y + h*(-dfdx)
@@ -663,17 +669,26 @@ def testStrategyAssignment(function_data):
 
 
 def main():
-	x = 0.5
-	y = 0.75
-	h = 0.005
+	#x = 0.5
+	#y = 0.75
+	#h = 0.1
 	#print("(x,y) = (" + str(x) + "," + str(y) + ")")
+	if len(sys.argv) < 5:
+		print("Usage: python level_curves.py filename h x y")
+		exit()
+	
 	filename = sys.argv[1]
+	h = float(sys.argv[2])
+	x = float(sys.argv[3])
+	y = float(sys.argv[4])
+	
+	print("list length = " + str(len(sys.argv)))
 
 	function_data = FunctionData()
-	function_data.readDataFromFile(sys.argv[1])
+	function_data.readDataFromFile(filename)
 	
 	testStrategyAssignment(function_data)
 	
 	level_curve_solver = LevelCurvesSolver(h, x, y, function_data)
-	#level_curve_solver.plotLevelCurve()
+	level_curve_solver.plotLevelCurve()
 main()
